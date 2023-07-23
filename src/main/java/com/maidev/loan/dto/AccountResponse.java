@@ -1,33 +1,22 @@
-package com.maidev.loan.model;
+package com.maidev.loan.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
+@Builder
 @Getter
 @Setter
-@Entity
-@Table(name="account")
-public class Account {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+public class AccountResponse {
     private Long id;   
-
-    @Column
     private String accountholder;
-
-    @Column
     private String bankname;
-
-    @Column
     private String iban;
-
-    @Column
-    private String bic;    
-    
+    private String bic;
 }
