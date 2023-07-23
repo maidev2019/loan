@@ -2,10 +2,14 @@ package com.maidev.loan.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name="address")
 public class Address {
@@ -29,4 +33,7 @@ public class Address {
 
     @Column
     private String postalcode;
+
+    @OneToOne(mappedBy = "address")
+    private Loan loan;
 }
