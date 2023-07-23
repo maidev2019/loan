@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AddressDTO {
+public class AddressRequest {
     private String street;
     private String streetAdditionalLine;
     private String city;

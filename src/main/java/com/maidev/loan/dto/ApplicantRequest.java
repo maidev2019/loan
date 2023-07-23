@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ApplicantDTO {
+public class ApplicantRequest {
     private String lastname;
     private String firstname;
     private String email;
