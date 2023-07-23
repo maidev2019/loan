@@ -15,4 +15,6 @@ public class LoanRequest {
     private Double desiredAmount;
     private Double anualIncome;
     private LoanType usedForType;
+    private ApplicantDTO applicant;
+    private AddressDTO address;
 }
