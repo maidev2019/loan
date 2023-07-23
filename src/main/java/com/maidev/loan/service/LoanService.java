@@ -1,12 +1,15 @@
 package com.maidev.loan.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.maidev.loan.dto.AddressDTO;
-import com.maidev.loan.dto.ApplicantDTO;
+import com.maidev.loan.dto.AddressRequest;
+import com.maidev.loan.dto.AddressResponse;
+import com.maidev.loan.dto.ApplicantRequest;
+import com.maidev.loan.dto.ApplicantResponse;
 import com.maidev.loan.dto.LoanRequest;
 import com.maidev.loan.dto.LoanResponse;
 import com.maidev.loan.model.Address;
@@ -28,64 +31,78 @@ public class LoanService {
     private final ApplicantRepository applicantRepository; 
 
     public void createLoanRequest(LoanRequest loanRequest){
-        AddressDTO addressTemp = loanRequest.getAddress();
-        Address address = new Address();
-        address.setStreet(addressTemp.getStreet());
-        address.setStreetAdditionalLine(addressTemp.getStreetAdditionalLine());
-        address.setCity(addressTemp.getCity());
-        address.setPostalcode(addressTemp.getPostalcode());
-        address.setState(addressTemp.getState());
-        Address savedAddress = addressRepository.save(address);
+        AddressRequest addressRequest = loanRequest.getAddress();
+       
+        Optional<Address> findAddress = addressRepository.findAddressRequest(addressRequest);
+        Address address = null;
+        if(findAddress.isPresent()){
+            address = findAddress.get();
+        }else{
+            address = new Address();
+            address.setStreet(addressRequest.getStreet());
+            address.setStreetAdditionalLine(addressRequest.getStreetAdditionalLine());
+            address.setCity(addressRequest.getCity());
+            address.setPostalcode(addressRequest.getPostalcode());
+            address.setState(addressRequest.getState());
+            address = addressRepository.save(address);
+        }
 
-        ApplicantDTO applicantTemp = loanRequest.getApplicant();
-        Applicant applicant = new Applicant();
-        applicant.setFirstname(applicantTemp.getFirstname());
-        applicant.setLastname(applicantTemp.getLastname());
-        applicant.setEmail(applicantTemp.getEmail());
-        
-        Applicant savedApplicant = applicantRepository.save(applicant);
+        ApplicantRequest applicantRequest = loanRequest.getApplicant();
+        Optional<Applicant> findApplicant =applicantRepository.findApplicant(applicantRequest);
+        Applicant applicant = null;
+        if(findApplicant.isPresent()){
+            applicant= findApplicant.get();
+        }else{
+            applicant = new Applicant();
+            applicant.setFirstname(applicantRequest.getFirstname());
+            applicant.setLastname(applicantRequest.getLastname());
+            applicant.setEmail(applicantRequest.getEmail());
+            applicant = applicantRepository.save(applicant);
+        }
 
         Loan loan = Loan.builder()            
             .desiredAmount(loanRequest.getDesiredAmount())
             .anualIncome(loanRequest.getAnualIncome())
             .usedForType(loanRequest.getUsedForType())
-            .address(savedAddress)
-            .applicant(savedApplicant)
+            .address(address)
+            .applicant(applicant)
             .build();
         loanRepository.save(loan);
         log.info("Loan {} is saved!", loan.getId());
     }
     public List<LoanResponse> getAllLoanResponses() {
-        return loanRepository.findAll().stream().map(this::mapTopLoanResponse).toList();
+        List<Loan> findAll = loanRepository.findAll();
+        return findAll.stream().map(this::mapTopLoanResponse).toList();
     }
-    private LoanResponse mapTopLoanResponse(Loan loan) {
-        ApplicantDTO applicantDTO = getApplicantDTO(loan.getApplicant());
-        AddressDTO addressDTO = getAddressDTO(loan.getAddress());
+    private LoanResponse mapTopLoanResponse(Loan loan) {       
+        ApplicantResponse applicantResponse = getApplicantResponse(loan.getApplicant());
+        AddressResponse addressResponse = getAddressResponse(loan.getAddress());
 
         return LoanResponse.builder()
         .id(loan.getId())
         .anualIncome(loan.getAnualIncome())
         .desiredAmount(loan.getDesiredAmount())
         .usedForType(loan.getUsedForType())
-        .applicant(applicantDTO)
-        .address(addressDTO)
+        .applicant(applicantResponse)
+        .address(addressResponse)
         .build();
     }
-    private AddressDTO getAddressDTO(Address address) {
-        AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setStreet(address.getStreet());
-        addressDTO.setStreetAdditionalLine(address.getStreetAdditionalLine());
-        addressDTO.setCity(address.getCity());
-        addressDTO.setPostalcode(address.getPostalcode());
-        addressDTO.setState(address.getState());
-        return addressDTO;
+    private AddressResponse getAddressResponse(Address address) {
+        return AddressResponse.builder()
+        .id(address.getId())
+        .street(address.getStreet())
+        .streetAdditionalLine(address.getStreetAdditionalLine())
+        .city(address.getCity())
+        .state(address.getState())
+        .postalcode(address.getPostalcode())
+        .build();
     }
-    private ApplicantDTO getApplicantDTO(Applicant applicant) {
-        
-        ApplicantDTO applicantDTO = new ApplicantDTO();
-        applicantDTO.setFirstname(applicant.getFirstname());
-        applicantDTO.setLastname(applicant.getLastname());
-        applicantDTO.setEmail(applicant.getEmail());
-        return applicantDTO;
+    private ApplicantResponse getApplicantResponse(Applicant applicant) {        
+        return ApplicantResponse.builder()
+        .id(applicant.getId())
+        .firstname(applicant.getFirstname())
+        .lastname(applicant.getLastname())
+        .email(applicant.getEmail())
+        .build();
     }
 }
