@@ -33,7 +33,5 @@ public class Address {
 
     @Column
     private String postalcode;
-
-    @OneToOne(mappedBy = "address")
-    private Loan loan;
+    
 }

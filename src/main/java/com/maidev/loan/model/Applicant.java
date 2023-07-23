@@ -27,6 +27,4 @@ public class Applicant {
     @Column
     private String email;
 
-    @OneToOne(mappedBy = "applicant")
-    private Loan loan;
 }
