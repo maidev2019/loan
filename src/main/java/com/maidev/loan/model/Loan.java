@@ -29,9 +29,16 @@ public class Loan {
   @Column
   private Double anualIncome;
 
+  @Column
+  private Double approvedAmount;
+
   @Enumerated(EnumType.STRING)	
   @Column
   private LoanType usedForType;
+
+  @Enumerated(EnumType.STRING)	
+  @Column
+  private LoanStatus processingStatus;
 
   @ManyToOne
   @JoinColumn(name = "applicant_id")
@@ -41,4 +48,7 @@ public class Loan {
   @JoinColumn(name = "address_id")
   private Address address;
 
+  @ManyToOne
+  @JoinColumn(name = "account_id")
+  private Account account;
 }

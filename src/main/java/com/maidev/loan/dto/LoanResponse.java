@@ -1,5 +1,7 @@
 package com.maidev.loan.dto;
 
+
+import com.maidev.loan.model.LoanStatus;
 import com.maidev.loan.model.LoanType;
 
 import lombok.AllArgsConstructor;
@@ -18,4 +20,7 @@ public class LoanResponse {
     private LoanType usedForType;
     private ApplicantResponse applicant;
     private AddressResponse address;
+    private Double approvedAmount;
+    private LoanStatus processingStatus;
+    private AccountResponse account;
 }
